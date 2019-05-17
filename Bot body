@@ -1,0 +1,27 @@
+import telebot
+from requests import get
+from bs4 import BeautifulSoup
+
+url = "https://api.telegram.org/bot893252425:AAHTUSjjj9mySO_vIHF9wKiFpRPj5nVa64I/"
+
+token = "893252425:AAHTUSjjj9mySO_vIHF9wKiFpRPj5nVa64I"
+
+bot = telebot.TeleBot(token)
+
+
+@bot.message_handler(content_types=['text'])
+def start(message):
+    if message.text == "MonkBot":
+        bot.send_message(message.from_user.id, "Введите название игры, которую желаете скачать")
+        s = "http://google.ru/search?q=download" + message.text
+        result = get(s)
+        c = result.text
+        soup = BeautifulSoup(c, 'lxml')
+        for h in soup.findAll('h3', attrs={"class": 'r'}):
+            link = h.find('a')
+            link["href"] = "http://www.google.ru" + link['href']
+            bot.send_message(message.from_user.id, str(link))
+            break
+
+
+bot.polling()
