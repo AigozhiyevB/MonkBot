@@ -12,16 +12,21 @@ bot = telebot.TeleBot(token)
 @bot.message_handler(content_types=['text'])
 def start(message):
     if message.text == "MonkBot":
-        bot.send_message(message.from_user.id, "Введите название игры, которую желаете скачать")
+        bot.send_message(message.from_user.id, "Привет, какую игру желаешь скачать?")
+    elif message.text == "/help":
+        bot.send_message(message.from_user.id, "MonkBot - начать взаимодействие")
+    else:
         s = "http://google.ru/search?q=download" + message.text
         result = get(s)
         c = result.text
-        soup = BeautifulSoup(c, 'lxml')
+        soup = BeautifulSoup(c, "lxml")
         for h in soup.findAll('h3', attrs={"class": 'r'}):
             link = h.find('a')
             link["href"] = "http://www.google.ru" + link['href']
             bot.send_message(message.from_user.id, str(link))
+            bot.send_message(message.from_user.id, "Я нашел что вы искали. Если хотите вызвать меня вновь введите: MonkBot")
             break
+
 
 
 bot.polling()
